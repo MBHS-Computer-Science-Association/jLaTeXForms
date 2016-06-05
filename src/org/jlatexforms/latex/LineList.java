@@ -3,34 +3,35 @@ package org.jlatexforms.latex;
 import java.util.LinkedList;
 import java.util.List;
 
-public class LineList {
-	private List<String> lineList;
-	private int indent;
+public class LineList implements IndentableComponent {
+	private List<CharSequence> lines;
 	
 	public LineList() {
-		indent = 0;
-		lineList = new LinkedList<>();
+		lines = new LinkedList<>();
+	}
+
+	public LineList(CharSequence line) {
+		this();
+		lines.add(line);
+	}
+
+	public void add(CharSequence line) {
+		lines.add(line.toString());
 	}
 	
-	public void setIndent(int indent) {
-		this.indent = indent;
+	public void addln(CharSequence line) {
+		lines.add(line.toString() + "\n");
 	}
 	
 	public StringBuilder write() {
-		return write(indent);
+		return write(0);
 	}
 	
 	public StringBuilder write(int indent) {
-		String prefix = "";
-		for (int i = 0; i < indent; i++)
-			prefix += "    ";
-		
+		String prefix = Indenter.getIndent(indent);
 		StringBuilder output = new StringBuilder();
-		
-		for (String line : lineList) {
-			output.append(prefix).append(line).append("\n");
-		}
-		
+		for (CharSequence line : lines)
+			output.append(prefix).append(line);
 		return output;
 	}
 }
